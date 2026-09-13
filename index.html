@@ -647,6 +647,81 @@
   @media (max-width: 768px){  .shorts-grid{ grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 480px){  .shorts-grid{ grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
+  /* ---------- Travel photos ---------- */
+  .photo-grid{
+    columns: 4 200px;
+    column-gap: 14px;
+  }
+  .photo-card{
+    break-inside: avoid;
+    margin-bottom: 14px;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-elev);
+    cursor: pointer;
+    transition: border-color .15s ease;
+  }
+  .photo-card:hover{ border-color: var(--rose); }
+  .photo-card img{
+    display:block;
+    width: 100%;
+    height: auto;
+  }
+  .photo-caption{ padding: 10px 12px 12px; }
+  .photo-caption .place{
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .photo-caption .note{
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  @media (max-width: 640px){ .photo-grid{ columns: 2 150px; } }
+
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(10,12,16,0.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px 20px;
+  }
+  .lightbox[hidden]{ display:none; }
+  .lightbox-figure{
+    margin:0;
+    max-width: min(90vw, 900px);
+    text-align:center;
+  }
+  .lightbox-figure img{
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: 8px;
+    display:block;
+    margin: 0 auto;
+  }
+  .lightbox-figure figcaption{
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  .lightbox-close{
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .lightbox-close:hover{ border-color: var(--rose); }
+
   /* ---------- Contact / footer ---------- */
   .contact-cta{
     text-align:left;
@@ -975,11 +1050,12 @@
     <div class="wrap shorts-header">
       <p class="kicker" style="color: var(--rose);">Hobbies</p>
       <h2>Outside of work</h2>
-      <p class="shorts-sub">A couple of things I spend time on for fun — gaming clips and small side projects.</p>
+      <p class="shorts-sub">A couple of things I spend time on for fun — gaming clips, travel photos, and small side projects.</p>
     </div>
 
     <nav class="subnav">
       <a href="#gaming-clips">Gaming clips</a>
+      <a href="#travel-photos">Travel photos</a>
       <a href="#side-projects">Side projects</a>
     </nav>
 
@@ -997,6 +1073,17 @@
           <button id="shortsToggle" class="btn btn-ghost" type="button" style="display:none;"></button>
           <a class="btn btn-ghost" href="https://www.youtube.com/@Timeybluu" target="_blank" rel="noopener">Visit the channel</a>
         </div>
+      </div>
+    </section>
+
+    <section id="travel-photos">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Travel photos</h2>
+          <span class="section-note">Places I've visited</span>
+        </div>
+        <div id="photoGrid" class="photo-grid" aria-live="polite"></div>
+        <p id="photoStatus" class="shorts-status"></p>
       </div>
     </section>
 
@@ -1032,6 +1119,16 @@
 <button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
+
+<div id="photoLightbox" class="lightbox" hidden>
+  <button class="lightbox-close" aria-label="Close photo">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <figure class="lightbox-figure">
+    <img id="lightboxImg" src="" alt="">
+    <figcaption id="lightboxCaption"></figcaption>
+  </figure>
+</div>
 
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
@@ -1174,6 +1271,61 @@
   });
 
   refreshShortsGrid();
+
+  /* ============================================================
+     TRAVEL PHOTOS — add one entry per photo.
+     "src" is the image path — put your photo files in a "photos"
+     folder next to this HTML file and reference them like
+     'photos/your-file.jpg'. "place" and "note" are optional text.
+  ============================================================ */
+  const PHOTOS = [
+    // { src: 'photos/example.jpg', place: 'Chiang Mai', note: 'Doi Suthep at sunrise' },
+  ];
+
+  function renderPhotos(){
+    const grid = document.getElementById('photoGrid');
+    const status = document.getElementById('photoStatus');
+    grid.innerHTML = '';
+    if (!PHOTOS.length){
+      status.textContent = "No photos yet — check back soon.";
+      return;
+    }
+    status.textContent = '';
+    PHOTOS.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View photo: ${p.place || 'travel photo'}`);
+      card.innerHTML = `
+        <img src="${p.src}" alt="${p.place || ''}" loading="lazy">
+        ${(p.place || p.note) ? `
+        <div class="photo-caption">
+          ${p.place ? `<div class="place">${p.place}</div>` : ''}
+          ${p.note ? `<div class="note">${p.note}</div>` : ''}
+        </div>` : ''}`;
+      card.addEventListener('click', () => openLightbox(i));
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); } });
+      grid.appendChild(card);
+    });
+  }
+
+  const lightbox = document.getElementById('photoLightbox');
+  function openLightbox(i){
+    const p = PHOTOS[i];
+    if (!p) return;
+    document.getElementById('lightboxImg').src = p.src;
+    document.getElementById('lightboxImg').alt = p.place || '';
+    document.getElementById('lightboxCaption').textContent = [p.place, p.note].filter(Boolean).join(' — ');
+    lightbox.hidden = false;
+  }
+  function closeLightbox(){ lightbox.hidden = true; }
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox || e.target.closest('.lightbox-close')) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+  renderPhotos();
 </script>
 
 </body>
