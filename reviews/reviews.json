@@ -1,23 +1,23 @@
 [
-      {
-              "title": "Logitech G102 Gaming Mouse",
-              "excerpt": "Budget mouse, but the click feel is way better than I expected.",
-              "body": "Been using this for Blox Fruits grinding sessions for a few months now. For the price, it's hard to complain - light, responsive, and the side buttons are handy for quick inventory swaps. Only downside is the cable feels a bit stiff out of the box, softens up after a while though. Would recommend if you don't want to spend a lot on a first gaming mouse.",
-              "image": "https://placehold.co/500x500/202836/98a1b0?text=Gaming+Mouse",
-              "date": "2026-07-14"
-      },
-      {
-              "title": "Anker Soundcore P20i Earbuds",
-              "excerpt": "Solid budget earbuds for calls and casual listening.",
-              "body": "Picked these up for work calls mostly, and they've held up well. Battery lasts most of a workday, connection to my phone is stable, and they're comfortable enough to forget I'm wearing them. Bass is a bit boosted for my taste but nothing an EQ app can't fix. Not audiophile-grade, but for daily use and the price, no complaints.",
-              "image": "https://placehold.co/500x500/202836/98a1b0?text=Earbuds",
-              "date": "2026-05-02"
-      },
-      {
-              "title": "Blox Fruits - Update 21 Quick Take",
-              "excerpt": "New fruits are fun, but the grind for materials got worse.",
-              "body": "The new fruits added in this update are genuinely fun to use, especially the transformation mechanics. That said, the material grind for awakening got noticeably longer, which is rough if you don't have a lot of playtime. Still one of the most consistently updated Roblox games out there though - worth checking out if you haven't played in a while.",
-              "image": "https://placehold.co/500x500/202836/98a1b0?text=Blox+Fruits",
-              "date": "2026-03-20"
-      }
+        {
+                  "title": "Logitech G102 Gaming Mouse",
+                  "excerpt": "Budget mouse, but the click feel is way better than I expected.",
+                  "body": "Been using this for Blox Fruits grinding sessions for a few months now. For the price, it's hard to complain - light, responsive, and the side buttons are handy for quick inventory swaps. Only downside is the cable feels a bit stiff out of the box, softens up after a while though. Would recommend if you don't want to spend a lot on a first gaming mouse.",
+                  "image": "https://placehold.co/500x500/202836/98a1b0?text=Gaming+Mouse",
+                  "date": "2026-07-14"
+        },
+        {
+                  "title": "Anker Soundcore P20i Earbuds",
+                  "excerpt": "Solid budget earbuds for calls and casual listening.",
+                  "body": "Picked these up for work calls mostly, and they've held up well. Battery lasts most of a workday, connection to my phone is stable, and they're comfortable enough to forget I'm wearing them. Bass is a bit boosted for my taste but nothing an EQ app can't fix. Not audiophile-grade, but for daily use and the price, no complaints.",
+                  "image": "https://placehold.co/500x500/202836/98a1b0?text=Earbuds",
+                  "date": "2026-05-02"
+        },
+        {
+                  "title": "Blox Fruits - Update 21 Quick Take",
+                  "excerpt": "New fruits are fun, but the grind for materials got worse.",
+                  "body": "The new fruits added in this update are genuinely fun to use, especially the transformation mechanics. That said, the material grind for awakening got noticeably longer, which is rough if you don't have a lot of playtime. Still one of the most consistently updated Roblox games out there though - worth checking out if you haven't played in a while.",
+                  "image": "https://placehold.co/500x500/202836/98a1b0?text=Blox+Fruits",
+                  "date": "2026-03-20"
+        }
 ]
