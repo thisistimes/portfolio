@@ -648,38 +648,45 @@
   @media (max-width: 480px){  .shorts-grid{ grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
   /* ---------- Travel photos ---------- */
-  .photo-grid{
-    columns: 4 200px;
-    column-gap: 14px;
+  .photo-feed{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
   }
-  .photo-card{
-    break-inside: avoid;
-    margin-bottom: 14px;
+  .photo-post{
     border: 1px solid var(--border-soft);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background: var(--bg-elev);
     cursor: pointer;
-    transition: border-color .15s ease;
+    transition: border-color .15s ease, transform .15s ease;
   }
-  .photo-card:hover{ border-color: var(--rose); }
-  .photo-card img{
+  .photo-post:hover{ border-color: var(--rose); transform: translateY(-2px); }
+  .photo-post .post-image{
     display:block;
     width: 100%;
-    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--bg-elev-2);
   }
-  .photo-caption{ padding: 10px 12px 12px; }
-  .photo-caption .place{
+  .post-body{ padding: 18px 20px 20px; }
+  .post-place{
+    display:flex;
+    align-items:center;
+    gap: 7px;
     font-family: var(--serif);
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 600;
+    margin: 0 0 8px;
   }
-  .photo-caption .note{
-    font-size: 12.5px;
+  .post-place .pin{ flex:none; color: var(--rose); }
+  .post-note{
+    font-size: 14.5px;
     color: var(--text-dim);
-    margin-top: 2px;
+    line-height: 1.6;
+    margin: 0;
   }
-  @media (max-width: 640px){ .photo-grid{ columns: 2 150px; } }
+  @media (max-width: 768px){ .photo-feed{ grid-template-columns: 1fr; } }
 
   .lightbox{
     position: fixed;
@@ -1082,7 +1089,7 @@
           <h2 class="section-title">Travel photos</h2>
           <span class="section-note">Places I've visited</span>
         </div>
-        <div id="photoGrid" class="photo-grid" aria-live="polite"></div>
+        <div id="photoGrid" class="photo-feed" aria-live="polite"></div>
         <p id="photoStatus" class="shorts-status"></p>
       </div>
     </section>
@@ -1273,15 +1280,25 @@
   refreshShortsGrid();
 
   /* ============================================================
-     TRAVEL PHOTOS — add one entry per photo.
-     "src" is the image path — put your photo files in a "photos"
-     folder next to this HTML file and reference them like
-     'photos/your-file.jpg'. "place" and "note" are optional text.
+     TRAVEL PHOTOS — pulled live from the "photos" folder in this
+     GitHub repo every time the page loads. Drag a new photo into
+     that folder on GitHub and it shows up here automatically —
+     no code edits needed, ever.
+
+     Naming convention for captions: name the file
+     "Place name - short note.jpg" (the note is optional — just
+     "Place name.jpg" works too). That text becomes the caption.
   ============================================================ */
-  const PHOTOS = [
-    { src: 'photos/travel-01.jpg' },
-    // { src: 'photos/example.jpg', place: 'Chiang Mai', note: 'Doi Suthep at sunrise' },
-  ];
+  const PHOTOS_REPO = 'thisistimes/portfolio';
+  const PHOTOS_PATH = 'photos';
+  let PHOTOS = [];
+
+  function parsePhotoName(filename){
+    const base = filename.replace(/\.[^./]+$/, '');
+    const sep = base.indexOf(' - ');
+    if (sep === -1) return { place: base, note: '' };
+    return { place: base.slice(0, sep), note: base.slice(sep + 3) };
+  }
 
   function renderPhotos(){
     const grid = document.getElementById('photoGrid');
@@ -1294,17 +1311,20 @@
     status.textContent = '';
     PHOTOS.forEach((p, i) => {
       const card = document.createElement('div');
-      card.className = 'photo-card';
+      card.className = 'photo-post';
       card.tabIndex = 0;
       card.setAttribute('role', 'button');
       card.setAttribute('aria-label', `View photo: ${p.place || 'travel photo'}`);
       card.innerHTML = `
-        <img src="${p.src}" alt="${p.place || ''}" loading="lazy">
-        ${(p.place || p.note) ? `
-        <div class="photo-caption">
-          ${p.place ? `<div class="place">${p.place}</div>` : ''}
-          ${p.note ? `<div class="note">${p.note}</div>` : ''}
-        </div>` : ''}`;
+        <img class="post-image" src="${p.src}" alt="${p.place || ''}" loading="lazy">
+        <div class="post-body">
+          ${p.place ? `
+          <p class="post-place">
+            <svg class="pin" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-7.2-7-12a7 7 0 0 1 14 0c0 4.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            ${p.place}
+          </p>` : ''}
+          ${p.note ? `<p class="post-note">${p.note}</p>` : ''}
+        </div>`;
       card.addEventListener('click', () => openLightbox(i));
       card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); } });
       grid.appendChild(card);
@@ -1326,7 +1346,24 @@
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
-  renderPhotos();
+  async function loadPhotos(){
+    const status = document.getElementById('photoStatus');
+    status.textContent = 'Loading photos…';
+    try {
+      const res = await fetch(`https://api.github.com/repos/${PHOTOS_REPO}/contents/${PHOTOS_PATH}`);
+      if (!res.ok) throw new Error(`GitHub API responded ${res.status}`);
+      const files = await res.json();
+      PHOTOS = files
+        .filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
+        .map(f => ({ src: f.download_url, ...parsePhotoName(f.name) }));
+      renderPhotos();
+    } catch (err){
+      console.error('Failed to load travel photos:', err);
+      status.textContent = "Couldn't load photos right now — try refreshing.";
+    }
+  }
+
+  loadPhotos();
 </script>
 
 </body>
