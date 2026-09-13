@@ -23,6 +23,7 @@
     --teal: #5fa39e;
     --teal-soft: rgba(95,163,158,0.12);
     --rose: #c1766a;
+    --violet: #8b88c9;
     --serif: 'Space Grotesk', sans-serif;
     --sans: 'Inter', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
@@ -168,8 +169,19 @@
   .tab-btn[data-view="home"] .dot{ background: var(--teal); }
   .tab-btn[data-view="portfolio"] .dot{ background: var(--accent); }
   .tab-btn[data-view="hobbies"] .dot{ background: var(--rose); }
+  .tab-btn[data-view="reviews"] .dot{ background: var(--violet); }
   .tab-btn:hover{ color: var(--text-dim); }
   .tab-btn[aria-selected="true"]{ background: var(--bg-elev-2); color: var(--text); }
+
+  @media (max-width: 480px){
+    .tabbar{
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabbar::-webkit-scrollbar{ display: none; }
+  }
 
   @media (max-width: 400px){
     .nav-name{ font-size: 15px; }
@@ -317,6 +329,35 @@
     .stats{ grid-template-columns: 1fr; }
     .stat{ border-left:none; border-top: 1px solid var(--border-soft); }
     .stat:first-child{ border-top:none; }
+  }
+
+  .summary-card{
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    background: var(--bg-elev);
+    overflow: hidden;
+  }
+  .summary-row{
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 8px 20px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .summary-row:first-child{ border-top: none; }
+  .summary-label{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-mute);
+    padding-top: 2px;
+  }
+  .summary-value{
+    font-size: 14.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  @media (max-width: 640px){
+    .summary-row{ grid-template-columns: 1fr; gap: 6px; }
   }
 
   /* ---------- Section shell ---------- */
@@ -729,6 +770,105 @@
   }
   .lightbox-close:hover{ border-color: var(--rose); }
 
+  /* ---------- Reviews ---------- */
+  .review-list{
+    display:flex;
+    flex-direction: column;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .review-card{
+    display:flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 22px;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .review-card:first-child{ border-top: none; }
+  .review-card:hover{ background: var(--bg-elev-2); }
+  .review-thumb{
+    flex: none;
+    width: 60px; height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--bg-elev-2);
+  }
+  .review-body-preview{ flex: 1; min-width: 0; }
+  .review-title{
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px;
+  }
+  .review-excerpt{
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .review-date{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-mute);
+    margin: 6px 0 0;
+  }
+
+  .review-modal-content{
+    position: relative;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 82vh;
+    overflow-y: auto;
+    padding: 32px;
+  }
+  .review-modal-content img{
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 22px;
+  }
+  .review-modal-content h3{
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .review-body-text{
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.75;
+    white-space: pre-wrap;
+    margin: 18px 0 24px;
+  }
+  .review-links{ display:flex; gap: 10px; flex-wrap: wrap; }
+  .review-modal-close{
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .review-modal-close:hover{ border-color: var(--violet); }
+  @media (max-width: 480px){
+    .review-modal-content{ padding: 24px 20px; max-height: 88vh; }
+    .review-thumb{ width: 48px; height: 48px; }
+  }
+
   /* ---------- Contact / footer ---------- */
   .contact-cta{
     text-align:left;
@@ -771,6 +911,7 @@
       <button class="tab-btn" id="tab-home" role="tab" data-view="home" aria-selected="true" aria-controls="view-home"><span class="dot"></span>home</button>
       <button class="tab-btn" id="tab-portfolio" role="tab" data-view="portfolio" aria-selected="false" aria-controls="view-portfolio"><span class="dot"></span>portfolio</button>
       <button class="tab-btn" id="tab-hobbies" role="tab" data-view="hobbies" aria-selected="false" aria-controls="view-hobbies"><span class="dot"></span>hobbies</button>
+      <button class="tab-btn" id="tab-reviews" role="tab" data-view="reviews" aria-selected="false" aria-controls="view-reviews"><span class="dot"></span>reviews</button>
     </div>
   </div>
 </header>
@@ -838,6 +979,50 @@
         </div>
       </div>
     </div>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Quick summary</h2>
+          <span class="section-note">30-second read</span>
+        </div>
+        <div class="summary-card">
+          <div class="summary-row">
+            <div class="summary-label">Current role</div>
+            <div class="summary-value">Backend Developer at Security Pitch · Sep 2021 – Present</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Core stack</div>
+            <div class="summary-value">
+              <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">FastAPI</span>
+                <span class="tag">Node.js</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">MongoDB</span>
+                <span class="tag">AWS</span>
+              </div>
+            </div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Domains</div>
+            <div class="summary-value">Healthcare, data privacy (PDPA), government systems, user management</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Education</div>
+            <div class="summary-value">B.Sc. Computer Science, Rajamangala University of Technology Krungthep</div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Location</div>
+            <div class="summary-value">Bangkok, Thailand</div>
+          </div>
+        </div>
+        <div class="hero-links" style="margin-top: 22px;">
+          <a class="btn btn-primary" href="Satit_Deunjam_Resume.pdf" download>Download résumé (PDF)</a>
+          <a class="btn btn-ghost" href="#" data-view-link="portfolio">Full experience &amp; projects</a>
+        </div>
+      </div>
+    </section>
 
     <section>
       <div class="wrap">
@@ -1116,11 +1301,25 @@
     </section>
   </div>
 
+  <!-- ============ REVIEWS VIEW ============ -->
+  <div class="view view-reviews" id="view-reviews" role="tabpanel" aria-labelledby="tab-reviews">
+    <div class="wrap shorts-header">
+      <p class="kicker" style="color: var(--violet);">Reviews</p>
+      <h2>Things I've tried</h2>
+      <p class="shorts-sub">Quick, honest takes on products — tap one to read the full review.</p>
+    </div>
+
+    <div class="wrap">
+      <div id="reviewList" class="review-list" aria-live="polite"></div>
+      <p id="reviewStatus" class="shorts-status"></p>
+    </div>
+  </div>
+
 </main>
 
 <footer class="wrap">
   <span>Satit Deunjam — Backend Developer, Bangkok</span>
-  <span>© 2026</span>
+  <span>© <span id="footerYear">2026</span></span>
 </footer>
 
 <button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">
@@ -1137,12 +1336,26 @@
   </figure>
 </div>
 
+<div id="reviewModal" class="lightbox" hidden>
+  <div class="review-modal-content">
+    <button class="review-modal-close" aria-label="Close review">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <img id="reviewModalImg" src="" alt="" style="display:none;">
+    <h3 id="reviewModalTitle"></h3>
+    <p id="reviewModalDate" class="review-date"></p>
+    <div id="reviewModalBody" class="review-body-text"></div>
+    <div id="reviewModalLinks" class="review-links"></div>
+  </div>
+</div>
+
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
   const views = {
     home: document.getElementById('view-home'),
     portfolio: document.getElementById('view-portfolio'),
-    hobbies: document.getElementById('view-hobbies')
+    hobbies: document.getElementById('view-hobbies'),
+    reviews: document.getElementById('view-reviews')
   };
 
   function setView(name, opts = {}){
@@ -1163,7 +1376,7 @@
   // and scrolls straight to that section.
   (function initFromHash(){
     const hash = location.hash.replace('#', '');
-    const TAB_NAMES = ['home', 'portfolio', 'hobbies'];
+    const TAB_NAMES = ['home', 'portfolio', 'hobbies', 'reviews'];
     if (TAB_NAMES.includes(hash)){
       setView(hash, { scroll: false });
       return;
@@ -1364,6 +1577,97 @@
   }
 
   loadPhotos();
+
+  /* ============================================================
+     REVIEWS — pulled live from reviews/reviews.json in this repo.
+     To add a review: open that file on GitHub, click the pencil
+     (edit) icon, and add a new object to the array, e.g.
+
+     {
+       "title": "iPhone 16 Pro",
+       "excerpt": "Short one-line summary for the list.",
+       "body": "The full review text goes here.",
+       "image": "photos/some-photo.jpg",
+       "tiktok": "https://www.tiktok.com/@you/video/123",
+       "facebook": "https://www.facebook.com/...",
+       "date": "2026-09-01"
+     }
+
+     Every field except "title" and "body" is optional. Put newest
+     first. Commit — no HTML changes needed, ever.
+  ============================================================ */
+  const REVIEWS_URL = `https://raw.githubusercontent.com/${PHOTOS_REPO}/main/reviews/reviews.json`;
+  let REVIEWS = [];
+
+  function renderReviews(){
+    const list = document.getElementById('reviewList');
+    const status = document.getElementById('reviewStatus');
+    list.innerHTML = '';
+    if (!REVIEWS.length){
+      status.textContent = "No reviews yet — check back soon.";
+      return;
+    }
+    status.textContent = '';
+    REVIEWS.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `Read review: ${r.title || 'review'}`);
+      const excerpt = r.excerpt || (r.body ? r.body.slice(0, 110) + (r.body.length > 110 ? '…' : '') : '');
+      card.innerHTML = `
+        ${r.image ? `<img class="review-thumb" src="${r.image}" alt="" loading="lazy">` : ''}
+        <div class="review-body-preview">
+          <h3 class="review-title">${r.title || 'Untitled'}</h3>
+          ${excerpt ? `<p class="review-excerpt">${excerpt}</p>` : ''}
+          ${r.date ? `<p class="review-date">${r.date}</p>` : ''}
+        </div>`;
+      card.addEventListener('click', () => openReview(i));
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openReview(i); } });
+      list.appendChild(card);
+    });
+  }
+
+  const reviewModal = document.getElementById('reviewModal');
+  function openReview(i){
+    const r = REVIEWS[i];
+    if (!r) return;
+    const img = document.getElementById('reviewModalImg');
+    if (r.image){ img.src = r.image; img.alt = r.title || ''; img.style.display = 'block'; }
+    else { img.style.display = 'none'; img.src = ''; }
+    document.getElementById('reviewModalTitle').textContent = r.title || '';
+    document.getElementById('reviewModalDate').textContent = r.date || '';
+    document.getElementById('reviewModalBody').textContent = r.body || '';
+    const linksEl = document.getElementById('reviewModalLinks');
+    linksEl.innerHTML = '';
+    if (r.tiktok) linksEl.innerHTML += `<a class="btn btn-ghost" href="${r.tiktok}" target="_blank" rel="noopener">Watch on TikTok</a>`;
+    if (r.facebook) linksEl.innerHTML += `<a class="btn btn-ghost" href="${r.facebook}" target="_blank" rel="noopener">See on Facebook</a>`;
+    reviewModal.hidden = false;
+  }
+  function closeReview(){ reviewModal.hidden = true; }
+  reviewModal.addEventListener('click', (e) => {
+    if (e.target === reviewModal || e.target.closest('.review-modal-close')) closeReview();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !reviewModal.hidden) closeReview(); });
+
+  async function loadReviews(){
+    const status = document.getElementById('reviewStatus');
+    status.textContent = 'Loading reviews…';
+    try {
+      const res = await fetch(REVIEWS_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Reviews fetch responded ${res.status}`);
+      REVIEWS = await res.json();
+      renderReviews();
+    } catch (err){
+      console.error('Failed to load reviews:', err);
+      REVIEWS = [];
+      status.textContent = "No reviews yet — check back soon.";
+    }
+  }
+
+  loadReviews();
+
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
 </script>
 
 </body>
