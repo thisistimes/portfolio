@@ -771,43 +771,39 @@
   .lightbox-close:hover{ border-color: var(--rose); }
 
   /* ---------- Reviews ---------- */
-  .review-list{
-    display:flex;
-    flex-direction: column;
+  .review-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+  .review-post{
     border: 1px solid var(--border-soft);
     border-radius: 12px;
     overflow: hidden;
-  }
-  .review-card{
-    display:flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 20px 22px;
     background: var(--bg-elev);
-    border-top: 1px solid var(--border-soft);
     cursor: pointer;
-    transition: background .15s ease;
+    transition: border-color .15s ease, transform .15s ease;
   }
-  .review-card:first-child{ border-top: none; }
-  .review-card:hover{ background: var(--bg-elev-2); }
-  .review-thumb{
-    flex: none;
-    width: 60px; height: 60px;
-    border-radius: 8px;
+  .review-post:hover{ border-color: var(--violet); transform: translateY(-2px); }
+  .review-post-image{
+    display:block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     background: var(--bg-elev-2);
   }
-  .review-body-preview{ flex: 1; min-width: 0; }
+  .review-post-body{ padding: 18px 20px 20px; }
   .review-title{
     font-family: var(--serif);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
-    margin: 0 0 5px;
+    margin: 0 0 8px;
   }
   .review-excerpt{
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--text-dim);
-    margin: 0;
+    line-height: 1.6;
+    margin: 0 0 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -819,6 +815,7 @@
     color: var(--text-mute);
     margin: 6px 0 0;
   }
+  @media (max-width: 768px){ .review-grid{ grid-template-columns: 1fr; } }
 
   .review-modal-content{
     position: relative;
@@ -866,7 +863,6 @@
   .review-modal-close:hover{ border-color: var(--violet); }
   @media (max-width: 480px){
     .review-modal-content{ padding: 24px 20px; max-height: 88vh; }
-    .review-thumb{ width: 48px; height: 48px; }
   }
 
   /* ---------- Contact / footer ---------- */
@@ -1310,7 +1306,7 @@
     </div>
 
     <div class="wrap">
-      <div id="reviewList" class="review-list" aria-live="polite"></div>
+      <div id="reviewList" class="review-grid" aria-live="polite"></div>
       <p id="reviewStatus" class="shorts-status"></p>
     </div>
   </div>
@@ -1610,14 +1606,14 @@
     status.textContent = '';
     REVIEWS.forEach((r, i) => {
       const card = document.createElement('div');
-      card.className = 'review-card';
+      card.className = 'review-post';
       card.tabIndex = 0;
       card.setAttribute('role', 'button');
       card.setAttribute('aria-label', `Read review: ${r.title || 'review'}`);
       const excerpt = r.excerpt || (r.body ? r.body.slice(0, 110) + (r.body.length > 110 ? '…' : '') : '');
       card.innerHTML = `
-        ${r.image ? `<img class="review-thumb" src="${r.image}" alt="" loading="lazy">` : ''}
-        <div class="review-body-preview">
+        ${r.image ? `<img class="review-post-image" src="${r.image}" alt="" loading="lazy">` : ''}
+        <div class="review-post-body">
           <h3 class="review-title">${r.title || 'Untitled'}</h3>
           ${excerpt ? `<p class="review-excerpt">${excerpt}</p>` : ''}
           ${r.date ? `<p class="review-date">${r.date}</p>` : ''}
