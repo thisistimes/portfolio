@@ -57,6 +57,48 @@
     border-radius: 2px;
   }
 
+  .skip-link{
+    position: absolute;
+    left: 12px;
+    top: -60px;
+    background: var(--accent);
+    color: #17140d;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 100;
+    transition: top .15s ease;
+  }
+  .skip-link:focus{ top: 12px; }
+
+  .back-to-top{
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity .2s ease, transform .2s ease, border-color .15s ease, color .15s ease;
+    z-index: 55;
+  }
+  .back-to-top.visible{ opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .back-to-top:hover{ border-color: var(--accent-dim); color: var(--text); }
+  @media (max-width: 480px){
+    .back-to-top{ right: 14px; bottom: 14px; width: 40px; height: 40px; }
+  }
+
   img, svg{ max-width: 100%; height: auto; }
 
   .wrap{
@@ -125,7 +167,7 @@
   .tab-btn .dot{ width:6px; height:6px; border-radius:50%; flex:none; }
   .tab-btn[data-view="home"] .dot{ background: var(--teal); }
   .tab-btn[data-view="portfolio"] .dot{ background: var(--accent); }
-  .tab-btn[data-view="shorts"] .dot{ background: var(--rose); }
+  .tab-btn[data-view="hobbies"] .dot{ background: var(--rose); }
   .tab-btn:hover{ color: var(--text-dim); }
   .tab-btn[aria-selected="true"]{ background: var(--bg-elev-2); color: var(--text); }
 
@@ -394,6 +436,11 @@
     transition: border-color .15s ease, color .15s ease;
   }
   nav.subnav a:hover{ border-color: var(--accent-dim); color: var(--text); }
+  nav.subnav a.active{
+    border-color: var(--accent-dim);
+    color: var(--text);
+    background: var(--accent-soft);
+  }
 
   /* ---------- Experience ---------- */
   .job{
@@ -465,6 +512,13 @@
     margin:0;
     color: var(--text-dim);
     font-size: 14.5px;
+  }
+  .project-static:hover::before{ opacity: 0; }
+  .project-meta{
+    margin-top: 12px !important;
+    font-family: var(--mono);
+    font-size: 12px !important;
+    color: var(--text-mute) !important;
   }
   @media (max-width: 640px){
     .project-grid{ grid-template-columns: 1fr; }
@@ -626,21 +680,23 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main-content">Skip to content</a>
+
 <header class="site-nav">
   <div class="wrap nav-row">
     <a href="#" class="nav-name" data-view-link="home">Satit Deunjam</a>
     <div class="tabbar" role="tablist" aria-label="Site sections">
-      <button class="tab-btn" role="tab" data-view="home" aria-selected="true"><span class="dot"></span>home</button>
-      <button class="tab-btn" role="tab" data-view="portfolio" aria-selected="false"><span class="dot"></span>portfolio</button>
-      <button class="tab-btn" role="tab" data-view="shorts" aria-selected="false"><span class="dot"></span>shorts</button>
+      <button class="tab-btn" id="tab-home" role="tab" data-view="home" aria-selected="true" aria-controls="view-home"><span class="dot"></span>home</button>
+      <button class="tab-btn" id="tab-portfolio" role="tab" data-view="portfolio" aria-selected="false" aria-controls="view-portfolio"><span class="dot"></span>portfolio</button>
+      <button class="tab-btn" id="tab-hobbies" role="tab" data-view="hobbies" aria-selected="false" aria-controls="view-hobbies"><span class="dot"></span>hobbies</button>
     </div>
   </div>
 </header>
 
-<main>
+<main id="main-content">
 
   <!-- ============ HOME VIEW ============ -->
-  <div class="view active view-home" id="view-home" role="tabpanel">
+  <div class="view active view-home" id="view-home" role="tabpanel" aria-labelledby="tab-home">
     <div class="wrap hero">
       <div>
         <p class="kicker">Bangkok, Thailand · GMT+7</p>
@@ -745,7 +801,7 @@
   </div>
 
   <!-- ============ PORTFOLIO VIEW ============ -->
-  <div class="view view-portfolio" id="view-portfolio" role="tabpanel">
+  <div class="view view-portfolio" id="view-portfolio" role="tabpanel" aria-labelledby="tab-portfolio">
 
     <div class="wrap portfolio-header">
       <p class="kicker">Portfolio</p>
@@ -914,23 +970,56 @@
     </section>
   </div>
 
-  <!-- ============ SHORTS VIEW ============ -->
-  <div class="view view-shorts" id="view-shorts" role="tabpanel">
+  <!-- ============ HOBBIES VIEW ============ -->
+  <div class="view view-hobbies" id="view-hobbies" role="tabpanel" aria-labelledby="tab-hobbies">
     <div class="wrap shorts-header">
-      <p class="kicker" style="color: var(--rose);">Shorts</p>
-      <h2>Recent clips</h2>
-      <p class="shorts-sub">A running log of Shorts from my channel — tap any of them to watch on YouTube.</p>
-      <div class="hero-links">
-        <a class="btn btn-ghost" href="https://www.youtube.com/@Timeybluu" target="_blank" rel="noopener">Visit the channel</a>
-      </div>
+      <p class="kicker" style="color: var(--rose);">Hobbies</p>
+      <h2>Outside of work</h2>
+      <p class="shorts-sub">A couple of things I spend time on for fun — gaming clips and small side projects.</p>
     </div>
 
-    <div class="wrap">
-      <div id="shortsGrid" class="shorts-grid" aria-live="polite">
-        <!-- populated by JS from the SHORTS list below -->
+    <nav class="subnav">
+      <a href="#gaming-clips">Gaming clips</a>
+      <a href="#side-projects">Side projects</a>
+    </nav>
+
+    <section id="gaming-clips">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Gaming clips</h2>
+          <span class="section-note">Blox Fruits shorts</span>
+        </div>
+        <div id="shortsGrid" class="shorts-grid" aria-live="polite">
+          <!-- populated by JS from the SHORTS list below -->
+        </div>
+        <p id="shortsStatus" class="shorts-status"></p>
+        <div class="hero-links" style="margin-top: 8px;">
+          <button id="shortsToggle" class="btn btn-ghost" type="button" style="display:none;"></button>
+          <a class="btn btn-ghost" href="https://www.youtube.com/@Timeybluu" target="_blank" rel="noopener">Visit the channel</a>
+        </div>
       </div>
-      <p id="shortsStatus" class="shorts-status"></p>
-    </div>
+    </section>
+
+    <section id="side-projects">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Side projects</h2>
+          <span class="section-note">Built for fun</span>
+        </div>
+        <div class="project-grid">
+          <div class="project project-static">
+            <h3>Fortune-telling site</h3>
+            <p>A small web app for fun — enter your details and get a horoscope-style reading.</p>
+            <p class="project-meta">No live link yet</p>
+          </div>
+          <div class="project project-static">
+            <h3>Spin wheel app</h3>
+            <p>A random picker / spinner tool, built just to try something new outside of work.</p>
+            <p class="project-meta">No live link yet</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
 </main>
@@ -940,24 +1029,79 @@
   <span>© 2026</span>
 </footer>
 
+<button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
 <script>
   const tabs = document.querySelectorAll('.tab-btn');
   const views = {
     home: document.getElementById('view-home'),
     portfolio: document.getElementById('view-portfolio'),
-    shorts: document.getElementById('view-shorts')
+    hobbies: document.getElementById('view-hobbies')
   };
 
-  function setView(name){
+  function setView(name, opts = {}){
+    const { scroll = true } = opts;
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === name)));
     Object.entries(views).forEach(([key, el]) => el.classList.toggle('active', key === name));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (history.replaceState) history.replaceState(null, '', '#' + name);
   }
 
   tabs.forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
   document.querySelectorAll('[data-view-link]').forEach(el => {
     el.addEventListener('click', (e) => { e.preventDefault(); setView(el.dataset.viewLink); });
   });
+
+  // Deep-link support: #home / #portfolio / #hobbies switches tabs directly;
+  // any sub-nav section id (e.g. #experience, #gaming-clips) opens its tab
+  // and scrolls straight to that section.
+  (function initFromHash(){
+    const hash = location.hash.replace('#', '');
+    const TAB_NAMES = ['home', 'portfolio', 'hobbies'];
+    if (TAB_NAMES.includes(hash)){
+      setView(hash, { scroll: false });
+      return;
+    }
+    const link = document.querySelector(`nav.subnav a[href="#${hash}"]`);
+    if (link){
+      const targetTab = link.closest('.view')?.id.replace('view-', '');
+      if (targetTab) setView(targetTab, { scroll: false });
+      requestAnimationFrame(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ block: 'start' });
+      });
+    }
+  })();
+
+  // Back-to-top button
+  const backToTop = document.getElementById('backToTop');
+  function toggleBackToTop(){
+    backToTop.classList.toggle('visible', window.scrollY > 480);
+  }
+  window.addEventListener('scroll', toggleBackToTop, { passive: true });
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  toggleBackToTop();
+
+  // Scrollspy: highlight the current section's pill in whichever sub-nav is on screen
+  const subnavLinks = document.querySelectorAll('nav.subnav a');
+  const spySections = Array.from(subnavLinks)
+    .map(link => document.getElementById(link.getAttribute('href').slice(1)))
+    .filter(Boolean);
+  if (spySections.length && 'IntersectionObserver' in window){
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const link = document.querySelector(`nav.subnav a[href="#${entry.target.id}"]`);
+        if (!link) return;
+        const group = link.closest('nav.subnav');
+        group.querySelectorAll('a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    }, { rootMargin: '-100px 0px -70% 0px', threshold: 0 });
+    spySections.forEach(s => spy.observe(s));
+  }
 
   /* ============================================================
      SHORTS — a simple hand-curated list, like blog posts.
@@ -1007,7 +1151,29 @@
     });
   }
 
-  renderShorts(SHORTS);
+  // Show a manageable first batch, with a toggle to reveal the rest —
+  // keeps the tab from dumping a long grid on people right away.
+  const SHORTS_PREVIEW_COUNT = 6;
+  let shortsExpanded = false;
+  const shortsToggle = document.getElementById('shortsToggle');
+
+  function refreshShortsGrid(){
+    renderShorts(shortsExpanded ? SHORTS : SHORTS.slice(0, SHORTS_PREVIEW_COUNT));
+    if (SHORTS.length > SHORTS_PREVIEW_COUNT){
+      shortsToggle.style.display = 'inline-flex';
+      shortsToggle.textContent = shortsExpanded ? 'Show fewer clips' : `Show all clips (${SHORTS.length})`;
+    } else {
+      shortsToggle.style.display = 'none';
+    }
+  }
+
+  shortsToggle.addEventListener('click', () => {
+    shortsExpanded = !shortsExpanded;
+    refreshShortsGrid();
+    if (!shortsExpanded) document.getElementById('gaming-clips').scrollIntoView({ block: 'start' });
+  });
+
+  refreshShortsGrid();
 </script>
 
 </body>
