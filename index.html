@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Satit Deunjam — Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12161d;
+    --bg-elev: #191f28;
+    --bg-elev-2: #202836;
+    --border: #2b3340;
+    --border-soft: #232b37;
+    --text: #eceef3;
+    --text-dim: #98a1b0;
+    --text-mute: #5f6879;
+    --accent: #e3a458;
+    --accent-dim: #b98847;
+    --accent-soft: rgba(227,164,88,0.10);
+    --teal: #5fa39e;
+    --teal-soft: rgba(95,163,158,0.12);
+    --rose: #c1766a;
+    --serif: 'Space Grotesk', sans-serif;
+    --sans: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  html, body{ max-width: 100%; overflow-x: hidden; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: inherit; }
+  ::selection{ background: var(--accent-soft); color: var(--accent); }
+
+  :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  img, svg{ max-width: 100%; height: auto; }
+
+  .wrap{
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  @media (max-width: 480px){
+    .wrap{ padding: 0 20px; }
+  }
+
+  /* ---------- Nav ---------- */
+  header.site-nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(18,22,29,0.86);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    min-height: 64px;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+  .nav-name{
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tabbar{
+    display:inline-flex;
+    gap: 2px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 3px;
+    flex: none;
+  }
+  .tab-btn{
+    appearance:none;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    transition: background .15s ease, color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tab-btn .dot{ width:6px; height:6px; border-radius:50%; flex:none; }
+  .tab-btn[data-view="home"] .dot{ background: var(--teal); }
+  .tab-btn[data-view="portfolio"] .dot{ background: var(--accent); }
+  .tab-btn[data-view="shorts"] .dot{ background: var(--rose); }
+  .tab-btn:hover{ color: var(--text-dim); }
+  .tab-btn[aria-selected="true"]{ background: var(--bg-elev-2); color: var(--text); }
+
+  @media (max-width: 400px){
+    .nav-name{ font-size: 15px; }
+    .tab-btn{ font-size: 12px; padding: 8px 12px; }
+  }
+
+  /* ---------- Views ---------- */
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ---------- Home hero ---------- */
+  .hero{
+    padding: 88px 0 64px;
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items:center;
+  }
+  .kicker{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--teal);
+    margin: 0 0 18px;
+  }
+  .kicker::before{
+    content: "";
+    display:inline-block;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--teal);
+    margin-right: 9px;
+    vertical-align: middle;
+  }
+  h1.name{
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(38px, 5.4vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .role{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(19px, 2.4vw, 23px);
+    color: var(--accent);
+    margin: 0 0 22px;
+  }
+  .bio{
+    max-width: 46ch;
+    color: var(--text-dim);
+    font-size: 16.5px;
+    margin: 0 0 30px;
+  }
+  .hero-links{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    align-items:center;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 11px 20px;
+    border-radius: 7px;
+    text-decoration:none;
+    font-size: 14.5px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .btn-primary{
+    background: var(--accent);
+    color: #17140d;
+  }
+  .btn-primary:hover{ transform: translateY(-1px); }
+  .btn-ghost{
+    border-color: var(--border);
+    color: var(--text-dim);
+  }
+  .btn-ghost:hover{ border-color: var(--text-mute); color: var(--text); }
+
+  .hero-graphic{ width:100%; height:auto; }
+  .hero-graphic circle.node{ fill: var(--bg-elev-2); stroke: var(--border); stroke-width:1; }
+  .hero-graphic circle.pulse{ fill: var(--teal); }
+  .hero-graphic line{ stroke: var(--border); stroke-width: 1; }
+  .hero-graphic .beam{
+    stroke: var(--accent);
+    stroke-width: 1.4;
+    stroke-dasharray: 6 220;
+    stroke-dashoffset: 0;
+    animation: travel 5.5s linear infinite;
+  }
+  @keyframes travel{ to{ stroke-dashoffset: -226; } }
+  @keyframes ping{
+    0%{ r:3; opacity:1; }
+    70%{ r:11; opacity:0; }
+    100%{ r:11; opacity:0; }
+  }
+  .hero-graphic .ping{
+    fill: none;
+    stroke: var(--teal);
+    stroke-width: 1;
+    animation: ping 2.6s ease-out infinite;
+  }
+
+  @media (max-width: 900px){
+    .hero{ grid-template-columns: 1fr; padding-top: 56px; gap: 40px; }
+    .hero-graphic{ max-width: 300px; margin: 0 auto; }
+  }
+  @media (max-width: 480px){
+    .hero{ padding: 44px 0 48px; }
+    .hero-graphic{ max-width: 240px; }
+    .hero-links{ flex-direction: column; align-items: stretch; }
+    .hero-links .btn{ justify-content: center; }
+  }
+
+  /* ---------- Stats ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .stat{
+    padding: 30px 8px;
+    text-align:center;
+    border-left: 1px solid var(--border-soft);
+  }
+  .stat:first-child{ border-left:none; }
+  .stat .num{
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 700;
+    color: var(--accent);
+    display:block;
+  }
+  .stat .label{
+    font-size: 13px;
+    color: var(--text-mute);
+    margin-top: 6px;
+  }
+  @media (max-width: 640px){
+    .stats{ grid-template-columns: 1fr; }
+    .stat{ border-left:none; border-top: 1px solid var(--border-soft); }
+    .stat:first-child{ border-top:none; }
+  }
+
+  /* ---------- Section shell ---------- */
+  section{ padding: 76px 0; border-top: 1px solid var(--border-soft); }
+  .view-home section:first-of-type{ border-top: none; }
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-bottom: 40px;
+  }
+  h2.section-title{
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 600;
+    margin:0;
+  }
+  .section-note{
+    font-size: 14px;
+    color: var(--text-mute);
+    font-family: var(--mono);
+  }
+  @media (max-width: 640px){
+    section{ padding: 52px 0; }
+    .section-head{ margin-bottom: 28px; }
+  }
+
+  /* ---------- Focus cards (home) ---------- */
+  .focus-grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+  }
+  .focus{
+    background: var(--bg);
+    padding: 26px;
+  }
+  .focus .idx{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--teal);
+  }
+  .focus h3{
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    margin: 8px 0 8px;
+  }
+  .focus p{ margin:0; color: var(--text-dim); font-size: 14.5px; }
+  @media (max-width: 640px){ .focus-grid{ grid-template-columns: 1fr; } }
+
+  /* ---------- CTA banner (home) ---------- */
+  .cta-banner{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 32px 36px;
+  }
+  @media (max-width: 480px){
+    .cta-banner{ padding: 26px 22px; }
+    .cta-banner .btn{ width: 100%; justify-content: center; }
+  }
+  .cta-banner h3{
+    font-family: var(--serif);
+    font-size: 21px;
+    margin: 0 0 4px;
+  }
+  .cta-banner p{ margin:0; color: var(--text-dim); font-size: 14.5px; }
+
+  /* ---------- Portfolio header + subnav ---------- */
+  .portfolio-header{ padding: 44px 0 28px; }
+  .portfolio-header h2{
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 32px);
+    font-weight: 600;
+    margin: 6px 0 0;
+  }
+  .portfolio-header .hero-links{ margin-top: 22px; }
+
+  nav.subnav{
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    background: rgba(18,22,29,0.92);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    display:flex;
+    gap: 8px;
+    padding: 12px 32px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  @media (max-width: 480px){
+    nav.subnav{ padding: 10px 20px; gap: 6px; }
+  }
+  nav.subnav a{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    text-decoration:none;
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  nav.subnav a:hover{ border-color: var(--accent-dim); color: var(--text); }
+
+  /* ---------- Experience ---------- */
+  .job{
+    display:grid;
+    grid-template-columns: 150px 1fr;
+    gap: 28px;
+    padding: 30px 0;
+    border-top: 1px solid var(--border-soft);
+  }
+  .job:first-of-type{ border-top: none; padding-top: 0; }
+  .job-period{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-mute);
+    padding-top: 3px;
+  }
+  .job-title{
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 3px;
+  }
+  .job-meta{
+    font-size: 14px;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  .job ul{
+    margin:0; padding: 0 0 0 18px;
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+  .job li{ margin-bottom: 7px; }
+  .job li::marker{ color: var(--text-mute); }
+
+  @media (max-width: 640px){
+    .job{ grid-template-columns: 1fr; gap: 4px; padding: 24px 0; }
+    .job-period{ order: -1; margin-bottom: 4px; }
+  }
+
+  /* ---------- Projects ---------- */
+  .project-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+  }
+  .project{
+    background: var(--bg);
+    padding: 28px 26px;
+    position: relative;
+  }
+  .project::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity .15s ease;
+  }
+  .project:hover::before{ opacity: 1; }
+  .project h3{
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 9px;
+  }
+  .project p{
+    margin:0;
+    color: var(--text-dim);
+    font-size: 14.5px;
+  }
+  @media (max-width: 640px){
+    .project-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Skills / details ---------- */
+  .details-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 56px;
+  }
+  .skill-group{ margin-bottom: 26px; }
+  .skill-group h4{
+    font-size: 12.5px;
+    color: var(--text-mute);
+    font-weight: 500;
+    margin: 0 0 12px;
+  }
+  .tags{ display:flex; flex-wrap:wrap; gap: 9px; }
+  .tag{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 6px 11px;
+    border-radius: 5px;
+  }
+  .aside-block{ margin-bottom: 30px; }
+  .aside-block h4{
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .aside-block p{
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--text-dim);
+  }
+  .aside-block .sub{
+    font-size: 13px;
+    color: var(--text-mute);
+    margin-top: 2px;
+  }
+  @media (max-width: 900px){
+    .details-grid{ grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  /* ---------- Shorts ---------- */
+  .shorts-header{ padding: 44px 0 32px; }
+  .shorts-header h2{
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 32px);
+    font-weight: 600;
+    margin: 6px 0 10px;
+  }
+  .shorts-sub{
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 52ch;
+    margin: 0 0 22px;
+  }
+
+  .shorts-grid{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    padding-bottom: 20px;
+  }
+  .short-card{
+    display:block;
+    text-decoration:none;
+    color: var(--text);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    overflow:hidden;
+    background: var(--bg-elev);
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .short-card:hover{ border-color: var(--rose); transform: translateY(-2px); }
+  .short-thumb{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background: var(--bg-elev-2);
+    overflow:hidden;
+  }
+  .short-thumb img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .short-thumb::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+  }
+  .short-play{
+    position:absolute; left:10px; bottom:10px; z-index:2;
+    width:26px; height:26px;
+    border-radius:50%;
+    background: rgba(18,22,29,0.7);
+    border: 1px solid rgba(255,255,255,0.25);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .short-play svg{ width:10px; height:10px; }
+  .short-title{
+    padding: 10px 12px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-dim);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .short-card.skeleton{ pointer-events:none; }
+  .short-card.skeleton .short-thumb{
+    background: linear-gradient(100deg, var(--bg-elev-2) 30%, var(--bg-elev) 50%, var(--bg-elev-2) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  @keyframes shimmer{ to{ background-position: -200% 0; } }
+
+  .shorts-status{
+    color: var(--text-mute);
+    font-size: 14px;
+    text-align:center;
+    padding: 30px 0 10px;
+  }
+
+  @media (max-width: 1024px){ .shorts-grid{ grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 768px){  .shorts-grid{ grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 480px){  .shorts-grid{ grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+  /* ---------- Contact / footer ---------- */
+  .contact-cta{
+    text-align:left;
+    padding-bottom: 40px;
+  }
+  .contact-cta h2{
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 600;
+    max-width: 16ch;
+    margin: 0 0 18px;
+  }
+  .contact-cta p{
+    color: var(--text-dim);
+    max-width: 48ch;
+    margin: 0 0 30px;
+  }
+  footer{
+    border-top: 1px solid var(--border-soft);
+    padding: 26px 0 40px;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-mute);
+  }
+  footer a{ text-decoration:none; color: var(--text-mute); }
+  footer a:hover{ color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="wrap nav-row">
+    <a href="#" class="nav-name" data-view-link="home">Satit Deunjam</a>
+    <div class="tabbar" role="tablist" aria-label="Site sections">
+      <button class="tab-btn" role="tab" data-view="home" aria-selected="true"><span class="dot"></span>home</button>
+      <button class="tab-btn" role="tab" data-view="portfolio" aria-selected="false"><span class="dot"></span>portfolio</button>
+      <button class="tab-btn" role="tab" data-view="shorts" aria-selected="false"><span class="dot"></span>shorts</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HOME VIEW ============ -->
+  <div class="view active view-home" id="view-home" role="tabpanel">
+    <div class="wrap hero">
+      <div>
+        <p class="kicker">Bangkok, Thailand · GMT+7</p>
+        <h1 class="name">Hi, I'm Satit.</h1>
+        <p class="role">Backend Developer</p>
+        <p class="bio">
+          For the past four years I've been building backend systems — APIs,
+          databases, and the infrastructure behind them — for teams working in
+          healthcare, data privacy, and government services. This site walks
+          through what I've built and how I work.
+        </p>
+        <div class="hero-links">
+          <a class="btn btn-primary" href="#" data-view-link="portfolio">View my portfolio</a>
+          <a class="btn btn-ghost" href="mailto:satit_d@hotmail.com">Get in touch</a>
+        </div>
+      </div>
+
+      <svg class="hero-graphic" viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abstract diagram of connected system nodes">
+        <line x1="180" y1="60"  x2="70"  y2="150"/>
+        <line x1="180" y1="60"  x2="290" y2="150"/>
+        <line x1="70"  y1="150" x2="120" y2="250"/>
+        <line x1="70"  y1="150" x2="180" y2="220"/>
+        <line x1="290" y1="150" x2="180" y2="220"/>
+        <line x1="290" y1="150" x2="250" y2="255"/>
+        <line x1="180" y1="220" x2="120" y2="250"/>
+        <line x1="180" y1="220" x2="250" y2="255"/>
+
+        <line class="beam" x1="180" y1="60" x2="70" y2="150"/>
+        <line class="beam" x1="70" y1="150" x2="180" y2="220"/>
+        <line class="beam" x1="180" y1="220" x2="250" y2="255"/>
+
+        <circle class="node" cx="180" cy="60"  r="10"/>
+        <circle class="node" cx="70"  cy="150" r="8"/>
+        <circle class="node" cx="290" cy="150" r="8"/>
+        <circle class="node" cx="180" cy="220" r="9"/>
+        <circle class="node" cx="120" cy="250" r="6"/>
+        <circle class="node" cx="250" cy="255" r="6"/>
+
+        <circle class="pulse" cx="180" cy="220" r="3.5"/>
+        <circle class="ping"  cx="180" cy="220" r="3"/>
+      </svg>
+    </div>
+
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat">
+          <span class="num">4+</span>
+          <span class="label">years in backend development</span>
+        </div>
+        <div class="stat">
+          <span class="num">4</span>
+          <span class="label">production domains</span>
+        </div>
+        <div class="stat">
+          <span class="num">10+</span>
+          <span class="label">tools &amp; frameworks in daily use</span>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">What I focus on</h2>
+        </div>
+        <div class="focus-grid">
+          <div class="focus">
+            <span class="idx">01</span>
+            <h3>APIs &amp; system design</h3>
+            <p>Structuring APIs and database architecture that hold up as the product grows.</p>
+          </div>
+          <div class="focus">
+            <span class="idx">02</span>
+            <h3>Privacy &amp; compliance</h3>
+            <p>Backend workflows for PDPA-related consent and data management.</p>
+          </div>
+          <div class="focus">
+            <span class="idx">03</span>
+            <h3>Healthcare platforms</h3>
+            <p>Services and integrations behind healthcare products.</p>
+          </div>
+          <div class="focus">
+            <span class="idx">04</span>
+            <h3>Government systems</h3>
+            <p>Document processing and management APIs for government platforms.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="cta-banner">
+          <div>
+            <h3>Want the full picture?</h3>
+            <p>Experience history, selected work, skills, and my résumé — all on the portfolio page.</p>
+          </div>
+          <a class="btn btn-primary" href="#" data-view-link="portfolio">Go to portfolio</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ PORTFOLIO VIEW ============ -->
+  <div class="view view-portfolio" id="view-portfolio" role="tabpanel">
+
+    <div class="wrap portfolio-header">
+      <p class="kicker">Portfolio</p>
+      <h2>Experience, selected work, and skills</h2>
+      <div class="hero-links">
+        <a class="btn btn-primary" href="Satit_Deunjam_Resume.pdf" download>Download résumé</a>
+        <a class="btn btn-ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+
+    <nav class="subnav">
+      <a href="#experience">Experience</a>
+      <a href="#work">Selected work</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <section id="experience">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Experience</h2>
+          <span class="section-note">4+ years</span>
+        </div>
+
+        <div class="job">
+          <div class="job-period">Sep 2021 — Present</div>
+          <div>
+            <h3 class="job-title">Backend Developer</h3>
+            <p class="job-meta">Security Pitch · Full-time · Bangkok</p>
+            <ul>
+              <li>Build APIs, choosing the framework that best fits each project's needs.</li>
+              <li>Work closely with business analysts to scope requirements, assess feasibility, and flag risks early.</li>
+              <li>Ship backend services across healthcare platforms, PDPA management tools, government document systems, and user management systems.</li>
+              <li>Design API structures and plan database architecture for new features and system growth.</li>
+              <li>Troubleshoot production issues and join client meetings when technical input is needed.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="job-period">May 2021 — Aug 2021</div>
+          <div>
+            <h3 class="job-title">Backend Developer</h3>
+            <p class="job-meta">Hytexts Interactive Limited · Part-time · Bangkok</p>
+            <ul>
+              <li>Built APIs for an online library platform using TypeScript, Node.js, and AWS.</li>
+              <li>Fixed API bugs and supported ongoing feature delivery.</li>
+              <li>Worked with cross-functional teams to keep APIs aligned with project requirements.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="job-period">Nov 2020 — Mar 2021</div>
+          <div>
+            <h3 class="job-title">Internship Trainee</h3>
+            <p class="job-meta">Arthur Southeast Asia · Bangkok</p>
+            <ul>
+              <li>Contributed to search microservices built with Node.js and Elasticsearch.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title">Selected work</h2>
+          <span class="section-note">4 projects</span>
+        </div>
+        <div class="project-grid">
+          <div class="project">
+            <h3>PDPA Management</h3>
+            <p>Backend workflows for privacy and consent management, built to support PDPA compliance requirements.</p>
+          </div>
+          <div class="project">
+            <h3>Healthsphere</h3>
+            <p>Backend services and integrations for a healthcare platform.</p>
+          </div>
+          <div class="project">
+            <h3>User Management System</h3>
+            <p>Authentication, user roles, and administration, built and maintained end to end.</p>
+          </div>
+          <div class="project">
+            <h3>Document Management System</h3>
+            <p>APIs and backend logic for processing and managing documents for a government platform.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap details-grid">
+        <div>
+          <div class="section-head" style="margin-bottom:28px;">
+            <h2 class="section-title">Skills &amp; tools</h2>
+          </div>
+
+          <div class="skill-group">
+            <h4>Languages &amp; frameworks</h4>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">Node.js</span>
+              <span class="tag">TypeScript</span>
+            </div>
+          </div>
+
+          <div class="skill-group">
+            <h4>Data &amp; identity</h4>
+            <div class="tags">
+              <span class="tag">MongoDB</span>
+              <span class="tag">Database design</span>
+              <span class="tag">Keycloak</span>
+              <span class="tag">Elasticsearch</span>
+            </div>
+          </div>
+
+          <div class="skill-group">
+            <h4>Infrastructure</h4>
+            <div class="tags">
+              <span class="tag">AWS</span>
+              <span class="tag">Docker</span>
+              <span class="tag">Linux</span>
+              <span class="tag">Git</span>
+            </div>
+          </div>
+
+          <div class="skill-group">
+            <h4>Practice</h4>
+            <div class="tags">
+              <span class="tag">MVC architecture</span>
+              <span class="tag">REST API design</span>
+              <span class="tag">System integration</span>
+              <span class="tag">Troubleshooting</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="aside-block">
+            <h4>Education</h4>
+            <p>Rajamangala University of Technology Krungthep</p>
+            <p class="sub">B.Sc. Computer Science · GPA 3.45</p>
+          </div>
+          <div class="aside-block">
+            <h4>Languages</h4>
+            <p>Thai — native</p>
+            <p class="sub">English — working proficiency in reading and writing</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap contact-cta">
+        <h2>Working on something that needs a backend?</h2>
+        <p>I'm reachable by email or phone, and happy to talk through a project, a role, or just the API design.</p>
+        <div class="hero-links">
+          <a class="btn btn-primary" href="mailto:satit_d@hotmail.com">satit_d@hotmail.com</a>
+          <a class="btn btn-ghost" href="tel:0819597455">081-959-7455</a>
+          <a class="btn btn-ghost" href="https://linkedin.com/in/satit-d" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ SHORTS VIEW ============ -->
+  <div class="view view-shorts" id="view-shorts" role="tabpanel">
+    <div class="wrap shorts-header">
+      <p class="kicker" style="color: var(--rose);">Shorts</p>
+      <h2>Latest from my channel</h2>
+      <p class="shorts-sub">Pulled automatically from YouTube — post a new one and it shows up here on the next visit.</p>
+      <div class="hero-links">
+        <a class="btn btn-ghost" id="channelLink" href="#" target="_blank" rel="noopener" style="display:none;">Visit the channel</a>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div id="shortsGrid" class="shorts-grid" aria-live="polite">
+        <!-- populated by JS -->
+      </div>
+      <p id="shortsStatus" class="shorts-status"></p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="wrap">
+  <span>Satit Deunjam — Backend Developer, Bangkok</span>
+  <span>© 2026</span>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const views = {
+    home: document.getElementById('view-home'),
+    portfolio: document.getElementById('view-portfolio'),
+    shorts: document.getElementById('view-shorts')
+  };
+
+  function setView(name){
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === name)));
+    Object.entries(views).forEach(([key, el]) => el.classList.toggle('active', key === name));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'shorts') loadShorts();
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
+  document.querySelectorAll('[data-view-link]').forEach(el => {
+    el.addEventListener('click', (e) => { e.preventDefault(); setView(el.dataset.viewLink); });
+  });
+
+  /* ============================================================
+     SHORTS — auto-pulled from YouTube on every page load.
+     Fill in the three values below, then new Shorts you publish
+     appear here automatically, no code changes needed.
+
+     1) YT_API_KEY — Google Cloud Console → APIs & Services →
+        Credentials → Create API key → enable "YouTube Data API v3".
+        Restrict it: Application restrictions = HTTP referrers,
+        add your site's domain. API restrictions = YouTube Data API v3 only.
+     2) YT_CHANNEL_ID — your channel's ID, starts with "UC…".
+        Found in YouTube Studio → Settings → Channel → Advanced settings.
+        (Leave blank and fill YT_CHANNEL_HANDLE instead if you don't have it.)
+     3) YT_CHANNEL_HANDLE — e.g. "@satitdeunjam" — only used if
+        YT_CHANNEL_ID is left blank.
+  ============================================================ */
+  const YT_API_KEY = "AIzaSyCsykLEPuJcxe5RN3Lbhu9IyVYB-H0_32Y";  // <-- paste your API key here
+  const YT_CHANNEL_ID = "UCPEePnkk1zsugJ5I83xnvRw";              // <-- paste your channel ID here (starts with UC)
+  const YT_CHANNEL_HANDLE = "@Timeybluu"; // <-- or paste your @handle here
+  const MAX_SHORTS = 10;
+  const SHORT_MAX_SECONDS = 180;      // Shorts can run up to 3 minutes
+
+  let shortsLoaded = false;
+
+  function isoDurationToSeconds(iso){
+    const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!m) return 0;
+    const h = parseInt(m[1] || 0, 10), min = parseInt(m[2] || 0, 10), s = parseInt(m[3] || 0, 10);
+    return h * 3600 + min * 60 + s;
+  }
+
+  function renderSkeletons(n){
+    const grid = document.getElementById('shortsGrid');
+    grid.innerHTML = '';
+    for (let i = 0; i < n; i++){
+      const d = document.createElement('div');
+      d.className = 'short-card skeleton';
+      d.innerHTML = '<div class="short-thumb"></div><div class="short-title">&nbsp;</div>';
+      grid.appendChild(d);
+    }
+  }
+
+  function renderShorts(items){
+    const grid = document.getElementById('shortsGrid');
+    const status = document.getElementById('shortsStatus');
+    grid.innerHTML = '';
+    if (!items.length){
+      status.textContent = "No Shorts found yet — check back soon.";
+      return;
+    }
+    status.textContent = '';
+    items.forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'short-card';
+      a.href = `https://www.youtube.com/shorts/${item.id}`;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = `
+        <div class="short-thumb">
+          <img src="${item.thumb}" alt="" loading="lazy">
+          <span class="short-play" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 4l14 8-14 8V4z" fill="#eceef3"/></svg>
+          </span>
+        </div>
+        <div class="short-title">${item.title}</div>`;
+      grid.appendChild(a);
+    });
+  }
+
+  async function loadShorts(){
+    if (shortsLoaded) return;
+    const status = document.getElementById('shortsStatus');
+    const channelLink = document.getElementById('channelLink');
+
+    if (YT_CHANNEL_HANDLE){
+      channelLink.href = `https://www.youtube.com/${YT_CHANNEL_HANDLE.replace(/^@?/, '@')}`;
+      channelLink.style.display = 'inline-flex';
+    }
+
+    if (!YT_API_KEY || (!YT_CHANNEL_ID && !YT_CHANNEL_HANDLE)){
+      status.textContent = "Shorts feed isn't connected yet — add a YouTube API key and channel to show it automatically.";
+      return;
+    }
+
+    shortsLoaded = true;
+    renderSkeletons(MAX_SHORTS);
+
+    try{
+      let channelId = YT_CHANNEL_ID;
+      if (!channelId){
+        const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(YT_CHANNEL_HANDLE)}&key=${YT_API_KEY}`);
+        const j = await r.json();
+        channelId = j.items?.[0]?.id;
+        if (!channelId) throw new Error('channel not found');
+        if (channelLink.style.display === 'none'){
+          channelLink.href = `https://www.youtube.com/${YT_CHANNEL_HANDLE.replace(/^@?/, '@')}`;
+          channelLink.style.display = 'inline-flex';
+        }
+      }
+
+      const chRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${YT_API_KEY}`);
+      const chJson = await chRes.json();
+      const uploadsId = chJson.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+      if (!uploadsId) throw new Error('uploads playlist not found');
+
+      if (!channelLink.href || channelLink.style.display === 'none'){
+        channelLink.href = `https://www.youtube.com/channel/${channelId}`;
+        channelLink.style.display = 'inline-flex';
+      }
+
+      const plRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId=${uploadsId}&key=${YT_API_KEY}`);
+      const plJson = await plRes.json();
+      const candidates = (plJson.items || []).map(it => ({
+        id: it.snippet.resourceId.videoId,
+        title: it.snippet.title,
+        thumb: it.snippet.thumbnails?.high?.url || it.snippet.thumbnails?.medium?.url || it.snippet.thumbnails?.default?.url
+      }));
+      if (!candidates.length){ renderShorts([]); return; }
+
+      const idsParam = candidates.map(c => c.id).join(',');
+      const vRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${idsParam}&key=${YT_API_KEY}`);
+      const vJson = await vRes.json();
+      const durations = {};
+      (vJson.items || []).forEach(v => { durations[v.id] = isoDurationToSeconds(v.contentDetails.duration); });
+
+      const shorts = candidates
+        .filter(c => (durations[c.id] ?? 999) <= SHORT_MAX_SECONDS)
+        .slice(0, MAX_SHORTS);
+
+      renderShorts(shorts);
+    } catch (err){
+      console.error('Shorts fetch failed:', err);
+      shortsLoaded = false;
+      document.getElementById('shortsGrid').innerHTML = '';
+      status.textContent = "Couldn't load the latest Shorts right now — try the channel link above.";
+    }
+  }
+</script>
+
+</body>
+</html>
