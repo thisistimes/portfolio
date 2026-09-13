@@ -582,14 +582,6 @@
     overflow: hidden;
   }
 
-  .short-card.skeleton{ pointer-events:none; }
-  .short-card.skeleton .short-thumb{
-    background: linear-gradient(100deg, var(--bg-elev-2) 30%, var(--bg-elev) 50%, var(--bg-elev-2) 70%);
-    background-size: 200% 100%;
-    animation: shimmer 1.6s ease-in-out infinite;
-  }
-  @keyframes shimmer{ to{ background-position: -200% 0; } }
-
   .shorts-status{
     color: var(--text-mute);
     font-size: 14px;
@@ -926,16 +918,16 @@
   <div class="view view-shorts" id="view-shorts" role="tabpanel">
     <div class="wrap shorts-header">
       <p class="kicker" style="color: var(--rose);">Shorts</p>
-      <h2>Latest from my channel</h2>
-      <p class="shorts-sub">Pulled automatically from YouTube — post a new one and it shows up here on the next visit.</p>
+      <h2>Recent clips</h2>
+      <p class="shorts-sub">A running log of Shorts from my channel — tap any of them to watch on YouTube.</p>
       <div class="hero-links">
-        <a class="btn btn-ghost" id="channelLink" href="#" target="_blank" rel="noopener" style="display:none;">Visit the channel</a>
+        <a class="btn btn-ghost" href="https://www.youtube.com/@Timeybluu" target="_blank" rel="noopener">Visit the channel</a>
       </div>
     </div>
 
     <div class="wrap">
       <div id="shortsGrid" class="shorts-grid" aria-live="polite">
-        <!-- populated by JS -->
+        <!-- populated by JS from the SHORTS list below -->
       </div>
       <p id="shortsStatus" class="shorts-status"></p>
     </div>
@@ -960,7 +952,6 @@
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === name)));
     Object.entries(views).forEach(([key, el]) => el.classList.toggle('active', key === name));
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (name === 'shorts') loadShorts();
   }
 
   tabs.forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
@@ -969,52 +960,32 @@
   });
 
   /* ============================================================
-     SHORTS — auto-pulled from YouTube on every page load.
-     Fill in the three values below, then new Shorts you publish
-     appear here automatically, no code changes needed.
-
-     1) YT_API_KEY — Google Cloud Console → APIs & Services →
-        Credentials → Create API key → enable "YouTube Data API v3".
-        Restrict it: Application restrictions = HTTP referrers,
-        add your site's domain. API restrictions = YouTube Data API v3 only.
-     2) YT_CHANNEL_ID — your channel's ID, starts with "UC…".
-        Found in YouTube Studio → Settings → Channel → Advanced settings.
-        (Leave blank and fill YT_CHANNEL_HANDLE instead if you don't have it.)
-     3) YT_CHANNEL_HANDLE — e.g. "@satitdeunjam" — only used if
-        YT_CHANNEL_ID is left blank.
+     SHORTS — a simple hand-curated list, like blog posts.
+     To add a new one: open the Short on YouTube, copy the id from
+     the URL (youtube.com/shorts/THIS_PART), then add a line below
+     with that id and a title. Newest first.
   ============================================================ */
-  const YT_API_KEY = "AIzaSyCsykLEPuJcxe5RN3Lbhu9IyVYB-H0_32Y";  // <-- paste your API key here
-  const YT_CHANNEL_ID = "UCPEePnkk1zsugJ5I83xnvRw";              // <-- paste your channel ID here (starts with UC)
-  const YT_CHANNEL_HANDLE = "@Timeybluu"; // <-- or paste your @handle here
-  const MAX_SHORTS = 10;
-  const SHORT_MAX_SECONDS = 180;      // Shorts can run up to 3 minutes
-
-  let shortsLoaded = false;
-
-  function isoDurationToSeconds(iso){
-    const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-    if (!m) return 0;
-    const h = parseInt(m[1] || 0, 10), min = parseInt(m[2] || 0, 10), s = parseInt(m[3] || 0, 10);
-    return h * 3600 + min * 60 + s;
-  }
-
-  function renderSkeletons(n){
-    const grid = document.getElementById('shortsGrid');
-    grid.innerHTML = '';
-    for (let i = 0; i < n; i++){
-      const d = document.createElement('div');
-      d.className = 'short-card skeleton';
-      d.innerHTML = '<div class="short-thumb"></div><div class="short-title">&nbsp;</div>';
-      grid.appendChild(d);
-    }
-  }
+  const SHORTS = [
+    { id: 'RpQ7PyUUybM', title: 'Thanks for 3K Sub 🎉' },
+    { id: 'bBUWcBqrXiw', title: 'I AM LOKI, PRINCE OF ELBAF! 🔥' },
+    { id: 'g11W8tfBPmE', title: 'Creating OP Trinkets in Blox Fruits!' },
+    { id: '58ZgyOOdOj0', title: 'Fiend Fruit (Transform) Showcase' },
+    { id: 'lEhtcqfkW_c', title: 'Fiend Fruit (Not Transform) Showcase' },
+    { id: 'C2iiOS9U5e0', title: 'Tiger Fruit (First Transform) Showcase' },
+    { id: 'mR0GNA_6s4I', title: 'Tiger Fruit (Not Transform) Showcase' },
+    { id: '6exYl9WRVlY', title: 'Spirit Fruit Showcase' },
+    { id: 'UYJNEiWNGb4', title: 'Win or Lose Ep. 4' },
+    { id: '6mbPW-DVsVE', title: 'Rumble Getting Reworked?!' },
+    { id: '3JBBfooYzaw', title: 'Pain Fruit Before Rework vs Sea Beast 💥' },
+    { id: 'UTnVZb3vVL0', title: 'How OP is Creation Fruit on Prehistoric Island?!' },
+  ];
 
   function renderShorts(items){
     const grid = document.getElementById('shortsGrid');
     const status = document.getElementById('shortsStatus');
     grid.innerHTML = '';
     if (!items.length){
-      status.textContent = "No Shorts found yet — check back soon.";
+      status.textContent = "No Shorts yet — check back soon.";
       return;
     }
     status.textContent = '';
@@ -1026,7 +997,7 @@
       a.rel = 'noopener';
       a.innerHTML = `
         <div class="short-thumb">
-          <img src="${item.thumb}" alt="" loading="lazy">
+          <img src="https://i.ytimg.com/vi/${item.id}/hqdefault.jpg" alt="" loading="lazy">
           <span class="short-play" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M6 4l14 8-14 8V4z" fill="#eceef3"/></svg>
           </span>
@@ -1036,74 +1007,7 @@
     });
   }
 
-  async function loadShorts(){
-    if (shortsLoaded) return;
-    const status = document.getElementById('shortsStatus');
-    const channelLink = document.getElementById('channelLink');
-
-    if (YT_CHANNEL_HANDLE){
-      channelLink.href = `https://www.youtube.com/${YT_CHANNEL_HANDLE.replace(/^@?/, '@')}`;
-      channelLink.style.display = 'inline-flex';
-    }
-
-    if (!YT_API_KEY || (!YT_CHANNEL_ID && !YT_CHANNEL_HANDLE)){
-      status.textContent = "Shorts feed isn't connected yet — add a YouTube API key and channel to show it automatically.";
-      return;
-    }
-
-    shortsLoaded = true;
-    renderSkeletons(MAX_SHORTS);
-
-    try{
-      let channelId = YT_CHANNEL_ID;
-      if (!channelId){
-        const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(YT_CHANNEL_HANDLE)}&key=${YT_API_KEY}`);
-        const j = await r.json();
-        channelId = j.items?.[0]?.id;
-        if (!channelId) throw new Error('channel not found');
-        if (channelLink.style.display === 'none'){
-          channelLink.href = `https://www.youtube.com/${YT_CHANNEL_HANDLE.replace(/^@?/, '@')}`;
-          channelLink.style.display = 'inline-flex';
-        }
-      }
-
-      const chRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${YT_API_KEY}`);
-      const chJson = await chRes.json();
-      const uploadsId = chJson.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
-      if (!uploadsId) throw new Error('uploads playlist not found');
-
-      if (!channelLink.href || channelLink.style.display === 'none'){
-        channelLink.href = `https://www.youtube.com/channel/${channelId}`;
-        channelLink.style.display = 'inline-flex';
-      }
-
-      const plRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId=${uploadsId}&key=${YT_API_KEY}`);
-      const plJson = await plRes.json();
-      const candidates = (plJson.items || []).map(it => ({
-        id: it.snippet.resourceId.videoId,
-        title: it.snippet.title,
-        thumb: it.snippet.thumbnails?.high?.url || it.snippet.thumbnails?.medium?.url || it.snippet.thumbnails?.default?.url
-      }));
-      if (!candidates.length){ renderShorts([]); return; }
-
-      const idsParam = candidates.map(c => c.id).join(',');
-      const vRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${idsParam}&key=${YT_API_KEY}`);
-      const vJson = await vRes.json();
-      const durations = {};
-      (vJson.items || []).forEach(v => { durations[v.id] = isoDurationToSeconds(v.contentDetails.duration); });
-
-      const shorts = candidates
-        .filter(c => (durations[c.id] ?? 999) <= SHORT_MAX_SECONDS)
-        .slice(0, MAX_SHORTS);
-
-      renderShorts(shorts);
-    } catch (err){
-      console.error('Shorts fetch failed:', err);
-      shortsLoaded = false;
-      document.getElementById('shortsGrid').innerHTML = '';
-      status.textContent = "Couldn't load the latest Shorts right now — try the channel link above.";
-    }
-  }
+  renderShorts(SHORTS);
 </script>
 
 </body>
