@@ -4,6 +4,39 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Satit Deunjam — Backend Developer</title>
+<meta name="description" content="Satit Deunjam — Backend Developer in Bangkok, Thailand. 4+ years building APIs and backend systems for healthcare, data privacy, and government platforms." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%228%22%20fill%3D%22%2312161d%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%226%22%20fill%3D%22%23e3a458%22/%3E%3C/svg%3E" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Satit Deunjam — Backend Developer" />
+<meta property="og:description" content="4+ years building APIs and backend systems for healthcare, data privacy, and government platforms. Bangkok, Thailand." />
+<meta property="og:url" content="https://thisistimes.github.io/portfolio/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Satit Deunjam — Backend Developer" />
+<meta name="twitter:description" content="4+ years building APIs and backend systems for healthcare, data privacy, and government platforms." />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Satit Deunjam",
+  "jobTitle": "Backend Developer",
+  "url": "https://thisistimes.github.io/portfolio/",
+  "email": "mailto:satit_d@hotmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Bangkok",
+    "addressCountry": "TH"
+  },
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Rajamangala University of Technology Krungthep"
+  },
+  "knowsAbout": ["Python", "FastAPI", "Node.js", "TypeScript", "MongoDB", "AWS", "REST API Design", "System Integration"],
+  "sameAs": ["https://linkedin.com/in/satit-d"]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -817,6 +850,30 @@
   }
   @media (max-width: 768px){ .review-grid{ grid-template-columns: 1fr; } }
 
+  /* ---------- Skeleton loading cards (Photos & Reviews) ---------- */
+  @keyframes shimmer{ to{ background-position: -200% 0; } }
+  .skeleton-card{
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-elev);
+  }
+  .skeleton-img{
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(100deg, var(--bg-elev-2) 30%, var(--bg-elev) 50%, var(--bg-elev-2) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  .skeleton-body{ padding: 18px 20px 20px; }
+  .skeleton-line{
+    height: 11px;
+    border-radius: 4px;
+    background: var(--bg-elev-2);
+    margin-bottom: 10px;
+  }
+  .skeleton-line.short{ width: 55%; margin-bottom: 0; }
+
   .review-modal-content{
     position: relative;
     background: var(--bg-elev);
@@ -1555,9 +1612,27 @@
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
+  // Shared skeleton placeholder while Photos/Reviews are fetching
+  function renderSkeletonCards(gridId, count){
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = '';
+    for (let i = 0; i < count; i++){
+      const s = document.createElement('div');
+      s.className = 'skeleton-card';
+      s.innerHTML = `
+        <div class="skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>`;
+      grid.appendChild(s);
+    }
+  }
+
   async function loadPhotos(){
     const status = document.getElementById('photoStatus');
-    status.textContent = 'Loading photos…';
+    status.textContent = '';
+    renderSkeletonCards('photoGrid', 4);
     try {
       const res = await fetch(`https://api.github.com/repos/${PHOTOS_REPO}/contents/${PHOTOS_PATH}`);
       if (!res.ok) throw new Error(`GitHub API responded ${res.status}`);
@@ -1568,6 +1643,7 @@
       renderPhotos();
     } catch (err){
       console.error('Failed to load travel photos:', err);
+      document.getElementById('photoGrid').innerHTML = '';
       status.textContent = "Couldn't load photos right now — try refreshing.";
     }
   }
@@ -1648,7 +1724,8 @@
 
   async function loadReviews(){
     const status = document.getElementById('reviewStatus');
-    status.textContent = 'Loading reviews…';
+    status.textContent = '';
+    renderSkeletonCards('reviewList', 3);
     try {
       const res = await fetch(REVIEWS_URL, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Reviews fetch responded ${res.status}`);
@@ -1657,6 +1734,7 @@
     } catch (err){
       console.error('Failed to load reviews:', err);
       REVIEWS = [];
+      document.getElementById('reviewList').innerHTML = '';
       status.textContent = "No reviews yet — check back soon.";
     }
   }
